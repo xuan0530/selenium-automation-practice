@@ -6,6 +6,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import pages.HomePage;
 import pages.SearchResultPage;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.time.Duration;
 
@@ -13,12 +14,24 @@ public class FirstSeleniumTest {
     private WebDriver driver;
 
     @BeforeEach
-    void setUp()  {
-        System.out.println("Setting up WebDriver");
-
+    void setUp() {
+        System.out.println("正在执行 @BeforeEach: 初始化浏览器...");
         WebDriverManager.chromedriver().setup();
-        driver = new ChromeDriver();
-        driver.manage().window().maximize();//设置最大化
+
+        // 2. 创建一个 ChromeOptions 对象
+        ChromeOptions options = new ChromeOptions();
+
+        // 3. 添加启动参数
+        options.addArguments("--headless"); // 关键参数：启用无头模式
+        options.addArguments("--disable-gpu"); // 官方推荐，在某些系统上避免bug
+        options.addArguments("--window-size=1920,1080"); // 设置一个窗口大小，避免有些元素因窗口太小而找不到
+        options.addArguments("--no-sandbox"); // 在Linux环境下运行，绕过沙箱模型的一些问题
+        options.addArguments("--disable-dev-shm-usage"); // 解决某些Linux环境下/dev/shm空间不足的问题
+
+        // 4. 将配置好的 options 传入 ChromeDriver 的构造函数
+        driver = new ChromeDriver(options);
+
+        // 隐式等待等其他设置保持不变
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
     }
 
